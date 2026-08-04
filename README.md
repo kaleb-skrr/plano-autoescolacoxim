@@ -1,2 +1,2 @@
-# plano-autescolacoxim
+# plano-autoescolacoxim
 calcular o valor final de um plano a depender das opções que o cliente deseja.
