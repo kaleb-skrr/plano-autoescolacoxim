@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <title>Monte seu plano — Autoescola</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,59 +19,66 @@
     --go-green: #2E9E5B;
     --ink: #1B1E22;
     --mist: #8B9199;
+    --mist-light: #B7BCC2;
     --hairline: rgba(27,30,34,0.12);
+    --hairline-dark: rgba(255,255,255,0.14);
     --radius: 14px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
+  a[href^="tel:"], a[href^="mailto:"], a[href^="sms:"]{ color:inherit !important; text-decoration:none !important; }
   body{ background:var(--chalk); color:var(--ink); font-family:'IBM Plex Sans', sans-serif; min-height:100vh; -webkit-font-smoothing:antialiased; }
   .display{ font-family:'Big Shoulders Stencil Text', sans-serif; font-weight:900; letter-spacing:0.02em; }
 
-  .hero{ background:var(--asphalt); color:var(--chalk); padding:56px 24px 40px; position:relative; overflow:hidden; }
-  .hero::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:6px;
-    background:repeating-linear-gradient(90deg, var(--line-yellow) 0 26px, transparent 26px 46px); opacity:0.9; }
+  .hero{ background:#FFFFFF; color:var(--ink); padding:56px 24px 64px; position:relative; overflow:hidden; border-bottom:1px solid var(--hairline); }
   .hero-inner{max-width:760px;margin:0 auto;}
-  .eyebrow{ text-transform:uppercase; font-size:12px; letter-spacing:0.16em; color:var(--line-yellow); font-weight:600; margin:0 0 10px; }
+  .eyebrow{ text-transform:uppercase; font-size:12px; letter-spacing:0.16em; color:var(--signal-orange); font-weight:600; margin:0 0 10px; }
   h1.display{ font-size:clamp(34px, 6vw, 56px); line-height:0.95; margin:0 0 14px; text-transform:uppercase; }
-  .hero p{ color:var(--chalk-dim); font-size:16px; line-height:1.5; max-width:56ch; margin:0; }
+  .hero-logo{ max-width:300px; max-height:130px; width:auto; height:auto; margin:0 0 18px; display:block; }
+  .hero p{ color:var(--mist); font-size:15px; line-height:1.45; max-width:46ch; margin:0; }
+  @media (max-width:480px){ .hero{ padding:40px 20px 52px; } .hero-logo{ max-width:220px; max-height:100px; } }
+
+  .dark-zone{ background:var(--asphalt); padding-bottom:4px; }
+  .dark-zone::before{ content:""; display:block; height:6px;
+    background:repeating-linear-gradient(90deg, var(--line-yellow) 0 26px, transparent 26px 46px); opacity:0.9; }
 
   .road-wrap{ max-width:760px; margin:0 auto; padding:28px 24px 4px; }
   .road{ position:relative; height:52px; }
-  .road-track{ position:absolute; left:0; right:0; top:24px; height:4px; background:var(--hairline); border-radius:2px; }
+  .road-track{ position:absolute; left:0; right:0; top:24px; height:4px; background:var(--hairline-dark); border-radius:2px; }
   .road-track-fill{ position:absolute; left:0; top:24px; height:4px; background:var(--line-yellow); border-radius:2px; transition:width .4s ease; }
   .road-checkpoints{ position:absolute; left:0; right:0; top:16px; display:flex; justify-content:space-between; }
-  .checkpoint{ width:20px; height:20px; border-radius:50%; background:var(--chalk); border:3px solid var(--hairline); z-index:1; transition:all .25s ease; }
+  .checkpoint{ width:20px; height:20px; border-radius:50%; background:var(--asphalt-2); border:3px solid var(--hairline-dark); z-index:1; transition:all .25s ease; }
   .checkpoint.done{ border-color:var(--line-yellow); background:var(--line-yellow); }
-  .checkpoint.active{ border-color:var(--signal-orange); background:var(--chalk); box-shadow:0 0 0 4px rgba(232,89,46,0.15); }
-  .car-marker{ position:absolute; top:-2px; transform:translateX(-50%); font-size:22px; transition:left .4s ease; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
-  .step-label{ max-width:760px; margin:0 auto; padding:0 24px; font-size:13px; color:var(--mist); font-weight:500; }
+  .checkpoint.active{ border-color:var(--signal-orange); background:var(--asphalt-2); box-shadow:0 0 0 4px rgba(232,89,46,0.2); }
+  .car-marker{ position:absolute; top:-2px; transform:translateX(-50%); font-size:22px; transition:left .4s ease; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.35)); }
+  .step-label{ max-width:760px; margin:0 auto; padding:0 24px; font-size:13px; color:var(--mist-light); font-weight:500; }
 
   main{ max-width:760px; margin:0 auto; padding:20px 24px 80px; }
-  .card{ background:#fff; border:1px solid var(--hairline); border-radius:var(--radius); padding:28px; }
-  .question{ font-size:clamp(20px,3.4vw,26px); font-weight:600; margin:0 0 4px; }
-  .question-sub{ color:var(--mist); font-size:14px; margin:0 0 22px; }
+  .card{ background:var(--asphalt); border:1px solid var(--hairline-dark); border-radius:var(--radius); padding:28px; }
+  .question{ font-size:clamp(20px,3.4vw,26px); font-weight:600; margin:0 0 4px; color:var(--chalk); }
+  .question-sub{ color:var(--mist-light); font-size:14px; margin:0 0 22px; }
 
   .options{ display:flex; flex-direction:column; gap:10px; }
   .option{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 18px;
-    border:2px solid var(--hairline); border-radius:10px; cursor:pointer; background:var(--chalk); text-align:left;
+    border:2px solid var(--hairline-dark); border-radius:10px; cursor:pointer; background:var(--asphalt-2); text-align:left;
     transition:border-color .15s ease, background .15s ease; font-family:inherit; }
   .option:hover{ border-color:var(--signal-orange); }
-  .option.selected{ border-color:var(--go-green); background:#EEF7F0; }
-  .option-text strong{ display:block; font-size:15.5px; font-weight:600; }
-  .option-text span{ display:block; font-size:13px; color:var(--mist); margin-top:2px; }
-  .option-price{ font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:14.5px; white-space:nowrap; color:var(--asphalt-2); }
-  .option-price.zero{ color:var(--mist); }
+  .option.selected{ border-color:var(--go-green); background:rgba(46,158,91,0.16); }
+  .option-text strong{ display:block; font-size:15.5px; font-weight:600; color:var(--chalk); }
+  .option-text span{ display:block; font-size:13px; color:var(--mist-light); margin-top:2px; }
+  .option-price{ font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:14.5px; white-space:nowrap; color:var(--chalk); }
+  .option-price.zero{ color:var(--mist-light); }
 
   .compare-grid{ display:flex; gap:14px; }
   .compare-col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
-  .compare-col h4{ margin:0 0 2px; font-size:14px; font-weight:600; color:var(--asphalt-2); line-height:1.3; }
+  .compare-col h4{ margin:0 0 2px; font-size:14px; font-weight:600; color:var(--mist-light); line-height:1.3; }
   .compare-option{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px;
-    border:2px solid var(--hairline); border-radius:9px; cursor:pointer; background:var(--chalk); text-align:left;
+    border:2px solid var(--hairline-dark); border-radius:9px; cursor:pointer; background:var(--asphalt-2); text-align:left;
     transition:border-color .15s ease, background .15s ease; font-family:inherit; width:100%; }
   .compare-option:hover{ border-color:var(--signal-orange); }
-  .compare-option.selected{ border-color:var(--go-green); background:#EEF7F0; }
-  .compare-option .co-label{ font-size:13px; font-weight:500; }
-  .compare-option .co-price{ font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:13.5px; white-space:nowrap; }
+  .compare-option.selected{ border-color:var(--go-green); background:rgba(46,158,91,0.16); }
+  .compare-option .co-label{ font-size:13px; font-weight:500; color:var(--chalk); }
+  .compare-option .co-price{ font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:13.5px; white-space:nowrap; color:var(--chalk); }
   @media (max-width:520px){ .compare-grid{ flex-direction:column; } }
 
   .nav-row{ display:flex; justify-content:space-between; align-items:center; margin-top:26px; }
@@ -78,9 +86,9 @@
     padding:12px 22px; border:none; cursor:pointer; transition:opacity .15s ease, transform .1s ease; }
   button.signbtn:active{ transform:scale(0.97); }
   button.signbtn:disabled{ opacity:0.35; cursor:not-allowed; }
-  .btn-back{ background:transparent; color:var(--asphalt-2); }
-  .btn-next{ background:var(--asphalt); color:var(--chalk); }
-  .btn-next.finish{ background:var(--go-green); }
+  .btn-back{ background:transparent; color:var(--mist-light); }
+  .btn-next{ background:var(--line-yellow); color:var(--asphalt); }
+  .btn-next.finish{ background:var(--go-green); color:#fff; }
 
   .result-head{ text-align:center; margin-bottom:22px; }
   .result-head .eyebrow2{ text-transform:uppercase; letter-spacing:0.14em; font-size:12px; color:var(--go-green); font-weight:600; margin:0 0 8px; }
@@ -88,14 +96,14 @@
   .odometer .label{ font-family:'IBM Plex Sans', sans-serif; color:var(--chalk-dim); font-size:12px; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px; }
   .odometer .digits{ font-family:'IBM Plex Mono', monospace; font-size:clamp(32px, 7vw, 46px); font-weight:600; letter-spacing:0.02em; }
 
-  .category-line{ font-size:14px; font-weight:600; color:var(--asphalt-2); margin:0 0 14px; }
+  .category-line{ font-size:14px; font-weight:600; color:var(--line-yellow); margin:0 0 14px; }
 
-  .receipt{ border-top:1px dashed var(--hairline); padding-top:6px; }
-  .receipt-row{ display:flex; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px dashed var(--hairline); font-size:14.5px; }
+  .receipt{ border-top:1px dashed var(--hairline-dark); padding-top:6px; }
+  .receipt-row{ display:flex; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px dashed var(--hairline-dark); font-size:14.5px; }
   .receipt-row:last-child{ border-bottom:none; }
-  .receipt-row .item-label{ color:var(--ink); font-weight:600; }
-  .receipt-row .item-sub{ display:block; color:var(--mist); font-size:12.5px; font-weight:400; margin-top:2px; }
-  .receipt-row .item-price{ font-family:'IBM Plex Mono', monospace; font-weight:600; white-space:nowrap; }
+  .receipt-row .item-label{ color:var(--chalk); font-weight:600; }
+  .receipt-row .item-sub{ display:block; color:var(--mist-light); font-size:12.5px; font-weight:400; margin-top:2px; }
+  .receipt-row .item-price{ font-family:'IBM Plex Mono', monospace; font-weight:600; white-space:nowrap; color:var(--chalk); }
   .receipt-note{ background:#FFF6E8; border:1px solid #F0DBAA; border-radius:8px; padding:12px 14px; font-size:12.5px; color:#7A5A17; margin-top:14px; line-height:1.5; }
 
   .exames-box{ background:var(--chalk); border:1px solid var(--hairline); border-radius:9px; padding:14px 16px; margin-top:12px; }
@@ -109,7 +117,7 @@
     font-weight:600; cursor:pointer; font-family:inherit; font-size:14px; width:100%; transition:opacity .15s ease, transform .1s ease; }
   .btn-copy:active{ transform:scale(0.98); }
   .btn-copy.copied{ background:var(--asphalt); }
-  .btn-restart{ background:transparent; border:2px solid var(--asphalt); color:var(--asphalt); padding:12px 26px;
+  .btn-restart{ background:transparent; border:2px solid var(--hairline-dark); color:var(--chalk); padding:12px 26px;
     border-radius:8px; font-weight:600; cursor:pointer; font-family:inherit; font-size:14px; width:100%; }
 
   @media (max-width:480px){ .card{ padding:20px; } .option{ padding:14px; } }
@@ -119,12 +127,13 @@
 
 <div class="hero">
   <div class="hero-inner">
-    <p class="eyebrow">Autoescola · Simulador de plano</p>
-    <h1 class="display">Monte seu plano</h1>
-    <p>Escolha sua categoria, compare os veículos e pacotes de aulas, e defina como quer receber sua CNH. As taxas de exames obrigatórios já entram automaticamente no valor final.</p>
+    <p class="eyebrow">Simulador de plano</p>
+    <img class="hero-logo" src="logo.png" alt="Logo da autoescola">
+    <p>Responda algumas perguntas e veja na hora o valor do seu plano.</p>
   </div>
 </div>
 
+<div class="dark-zone">
 <div class="road-wrap">
   <div class="road">
     <div class="road-track"></div>
@@ -138,6 +147,7 @@
 <main>
   <div class="card" id="card"></div>
 </main>
+</div>
 
 <script>
 /* ---------- DADOS BASE (ATUALIZE OS VALORES AQUI) ---------- */
