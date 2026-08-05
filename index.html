@@ -157,11 +157,19 @@ const DETRAN = [
   { id:'digital', label:'Somente CNH digital', desc:'Só a versão digital, sem o documento físico', value:502.03 },
 ];
 
-const EXAMES_OBRIGATORIOS = [
+const EXAMES_PRIMEIRA_CNH = [
   { label:'Exame psicológico', value:95.00 },
   { label:'Exame médico', value:85.00 },
   { label:'Exame toxicológico', value:120.00 },
 ];
+
+const EXAMES_ADICAO_CATEGORIA = [
+  { label:'Exame médico', value:85.00 },
+];
+
+function getExamesObrigatorios(servico){
+  return servico === 'adicao' ? EXAMES_ADICAO_CATEGORIA : EXAMES_PRIMEIRA_CNH;
+}
 
 const MOTOS = {
   factor: {
@@ -207,16 +215,40 @@ function getSteps(answers){
   const s = [];
 
   s.push({
-    id:'categoria',
+    id:'servico',
     type:'single',
-    question:'Qual categoria de CNH você quer tirar?',
-    sub:'Isso define quais veículos vão aparecer nas próximas etapas.',
+    question:'Qual serviço você procura?',
+    sub:'Isso define o processo, os exames exigidos e o valor do seu plano.',
     options:[
-      { id:'A',  label:'Categoria A — Motocicleta',  desc:'Somente moto', value:0 },
-      { id:'B',  label:'Categoria B — Automóvel',     desc:'Somente carro', value:0 },
-      { id:'AB', label:'Categoria AB — Moto + Carro', desc:'Processo combinado', value:0 },
+      { id:'primeira', label:'1ª CNH', desc:'Você ainda não tem nenhuma categoria', value:0 },
+      { id:'adicao', label:'Adição de Categoria', desc:'Você já tem CNH e quer adicionar outra categoria', value:0 },
     ]
   });
+
+  if (answers.servico === 'primeira'){
+    s.push({
+      id:'categoria',
+      type:'single',
+      question:'Qual categoria de CNH você quer tirar?',
+      sub:'Isso define quais veículos vão aparecer nas próximas etapas.',
+      options:[
+        { id:'A',  label:'Categoria A — Motocicleta',  desc:'Somente moto', value:0 },
+        { id:'B',  label:'Categoria B — Automóvel',     desc:'Somente carro', value:0 },
+        { id:'AB', label:'Categoria AB — Moto + Carro', desc:'Processo combinado', value:0 },
+      ]
+    });
+  } else if (answers.servico === 'adicao'){
+    s.push({
+      id:'categoria',
+      type:'single',
+      question:'Qual categoria você pretende adicionar?',
+      sub:'Adição de categoria tem processo e exames mais simples que a 1ª CNH.',
+      options:[
+        { id:'A', label:'Categoria A — Motocicleta', desc:'Adicionar habilitação para moto', value:0 },
+        { id:'B', label:'Categoria B — Automóvel', desc:'Adicionar habilitação para carro', value:0 },
+      ]
+    });
+  }
 
   if (answers.categoria === 'A' || answers.categoria === 'AB'){
     s.push({
@@ -339,6 +371,11 @@ function render(){
     document.querySelectorAll('.option').forEach(btn => {
       btn.addEventListener('click', () => {
         answers[step.id] = btn.getAttribute('data-opt');
+        if (step.id === 'servico'){
+          delete answers.categoria;
+          delete answers.veiculoMoto; delete answers.pacoteMoto;
+          delete answers.veiculoCarro; delete answers.pacoteCarro;
+        }
         if (step.id === 'categoria'){
           delete answers.veiculoMoto; delete answers.pacoteMoto;
           delete answers.veiculoCarro; delete answers.pacoteCarro;
@@ -373,12 +410,15 @@ function renderResult(vSteps){
   document.getElementById('stepLabel').textContent = 'Chegada 🏁';
   renderRoad(vSteps.length, vSteps.length);
 
+  const servicoStep = vSteps.find(s => s.id === 'servico');
+  const servicoSel = getSelected(servicoStep, answers);
   const categoriaStep = vSteps.find(s => s.id === 'categoria');
   const categoriaSel = getSelected(categoriaStep, answers);
-  const otherSteps = vSteps.filter(s => s.id !== 'categoria');
+  const otherSteps = vSteps.filter(s => s.id !== 'categoria' && s.id !== 'servico');
   const items = otherSteps.map(step => getSelected(step, answers));
 
-  const examesTotal = EXAMES_OBRIGATORIOS.reduce((sum,e) => sum + e.value, 0);
+  const examesObrigatorios = getExamesObrigatorios(answers.servico);
+  const examesTotal = examesObrigatorios.reduce((sum,e) => sum + e.value, 0);
   const total = items.reduce((sum, it) => sum + it.value, 0) + examesTotal;
 
   const rowsHtml = items.map(it => `
@@ -388,7 +428,7 @@ function renderResult(vSteps){
     </div>
   `).join('');
 
-  const examesLinesHtml = EXAMES_OBRIGATORIOS.map(e => `
+  const examesLinesHtml = examesObrigatorios.map(e => `
     <div class="exame-line">${e.label} — <strong>${formatBRL(e.value)}</strong></div>
   `).join('');
 
@@ -409,7 +449,7 @@ function renderResult(vSteps){
       <div class="label">Total do plano</div>
       <div class="digits" id="odoDigits">${formatBRL(0)}</div>
     </div>
-    <p class="category-line">${categoriaSel.mainLabel}</p>
+    <p class="category-line">${servicoSel.mainLabel} — ${categoriaSel.mainLabel}</p>
     <div class="receipt">
       ${rowsHtml}
     </div>
@@ -430,21 +470,22 @@ function renderResult(vSteps){
   });
 
   document.getElementById('copyBtn').addEventListener('click', () => {
-    const msg = buildMessage(categoriaSel, items, examesTotal, total);
+    const msg = buildMessage(servicoSel, categoriaSel, items, examesObrigatorios, examesTotal, total);
     copyToClipboard(msg, document.getElementById('copyBtn'));
   });
 }
 
-function buildMessage(categoriaSel, items, examesTotal, total){
+function buildMessage(servicoSel, categoriaSel, items, examesObrigatorios, examesTotal, total){
   let lines = [];
   lines.push('Plano montado no simulador da autoescola:');
   lines.push('');
+  lines.push(`Serviço: ${servicoSel.mainLabel}`);
   lines.push(`Categoria: ${categoriaSel.mainLabel}`);
   items.forEach(it => {
     lines.push(`- ${it.mainLabel} (${it.subLabel.replace('Modelo: ','')}) — ${it.value===0 ? 'incluso' : formatBRL(it.value)}`);
   });
   lines.push('Exames obrigatórios (pagos à clínica):');
-  EXAMES_OBRIGATORIOS.forEach(e => {
+  examesObrigatorios.forEach(e => {
     lines.push(`- ${e.label} — ${formatBRL(e.value)}`);
   });
   lines.push(`Subtotal exames: ${formatBRL(examesTotal)}`);
